@@ -5,7 +5,7 @@ import { normeAPI } from '../../api/normeAPI';
 import { Button, Card, CardContent, Typography, Box, CircularProgress } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 
-const NormeDetail: React.FC = () => {
+const NormeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
