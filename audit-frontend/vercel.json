@@ -1,11 +1,13 @@
 {
+  "name": "cybrix-solutions",
+  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-backend-url.onrender.com/api/:path*"
+      "destination": "https://projet-master-90u5.onrender.com/api/:path*"
     },
     {
       "source": "/:path*",
@@ -13,7 +15,7 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://your-backend-url.onrender.com/api",
-    "VITE_FRONTEND_URL": "https://your-app.vercel.app"
+    "VITE_API_URL": "https://projet-master-90u5.onrender.com/api",
+    "VITE_FRONTEND_URL": "https://cybrix-solutions.vercel.app"
   }
 }
