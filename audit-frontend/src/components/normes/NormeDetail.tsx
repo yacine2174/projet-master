@@ -5,7 +5,8 @@ import { normeAPI } from '../../api/normeAPI';
 import { Button, Card, CardContent, Typography, Box, CircularProgress } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 
-const NormeDetail = () => {
+// Ensure this component is properly exported as default
+export default function NormeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -74,5 +75,3 @@ const NormeDetail = () => {
     </Box>
   );
 };
-
-export default NormeDetail;
