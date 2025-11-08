@@ -298,6 +298,66 @@ export const userAPI = {
     });
     return handleResponse(res);
   },
+  async approveUser(userId: string): Promise<User> {
+    try {
+      console.log('Attempting to approve user:', userId);
+      console.log('API Base URL:', API_BASE);
+      
+      const url = `${API_BASE}/utilisateurs/${userId}/approve`;
+      console.log('Request URL:', url);
+      
+      const headers = buildHeaders();
+      console.log('Request headers:', headers);
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: headers,
+        credentials: 'include',
+      });
+      
+      console.log('Response status:', res.status);
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Approval failed with status:', res.status);
+        console.error('Error response:', errorText);
+        throw new Error(errorText || 'Failed to approve user');
+      }
+      
+      const data = await res.json();
+      console.log('Approval successful:', data);
+      return data;
+    } catch (error) {
+      console.error('Error in approveUser:', error);
+      throw error;
+    }
+  },
+
+  async rejectUser(userId: string): Promise<User> {
+    try {
+      console.log('Attempting to reject user:', userId);
+      const url = `${API_BASE}/utilisateurs/${userId}/reject`;
+      const headers = buildHeaders();
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: headers,
+        credentials: 'include',
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Rejection failed with status:', res.status);
+        console.error('Error response:', errorText);
+        throw new Error(errorText || 'Failed to reject user');
+      }
+      
+      return await res.json();
+    } catch (error) {
+      console.error('Error in rejectUser:', error);
+      throw error;
+    }
+  },
   async deleteUser(userId: string) {
     const res = await fetch(`${API_BASE}${API_ENDPOINTS.DELETE_USER}/${userId}`, {
       method: 'DELETE',

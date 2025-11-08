@@ -25,23 +25,37 @@ const UserApproval: React.FC = () => {
 
   const handleApproveUser = async (userId: string) => {
     try {
-      await userAPI.approveUser(userId);
+      console.log('Attempting to approve user:', userId);
+      const userToApprove = users.find(u => u._id === userId);
+      console.log('User to approve:', userToApprove);
+      
+      const result = await userAPI.approveUser(userId);
+      console.log('Approval API response:', result);
+      
       setUsers(users.map(u => 
         u._id === userId ? { ...u, status: 'approved' as const } : u
       ));
     } catch (error: any) {
-      setError('Erreur lors de l\'approbation');
+      console.error('Error in handleApproveUser:', error);
+      setError(`Erreur lors de l'approbation: ${error.message || 'Erreur inconnue'}`);
     }
   };
 
   const handleRejectUser = async (userId: string) => {
     try {
-      await userAPI.rejectUser(userId);
+      console.log('Attempting to reject user:', userId);
+      const userToReject = users.find(u => u._id === userId);
+      console.log('User to reject:', userToReject);
+      
+      const result = await userAPI.rejectUser(userId);
+      console.log('Rejection API response:', result);
+      
       setUsers(users.map(u => 
         u._id === userId ? { ...u, status: 'rejected' as const } : u
       ));
     } catch (error: any) {
-      setError('Erreur lors du rejet');
+      console.error('Error in handleRejectUser:', error);
+      setError(`Erreur lors du rejet: ${error.message || 'Erreur inconnue'}`);
     }
   };
 
