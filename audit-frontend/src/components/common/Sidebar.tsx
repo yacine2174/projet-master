@@ -18,7 +18,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
     { name: 'Constats', icon: '📌', path: '/constats', roles: ['SSI', 'RSSI'] },
     { name: 'Recommandations', icon: '💡', path: '/recommandations', roles: ['SSI', 'RSSI'] },
     { name: "Plans d'Action", icon: '📅', path: '/planactions', roles: ['SSI', 'RSSI'] },
-    { name: 'Normes', icon: '📚', path: '/normes', roles: ['ADMIN', 'SSI', 'RSSI'] },
     { name: 'Preuves', icon: '📁', path: '/preuves', roles: ['SSI', 'RSSI'] },
     { name: 'Rapports', icon: '📊', path: '/reports', roles: ['SSI', 'RSSI'] },
     { name: 'Admin', icon: '⚙️', path: '/admin', roles: ['ADMIN'] },
