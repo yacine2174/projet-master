@@ -138,11 +138,6 @@ const AdminDashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-white">Tableau de Bord Admin</h1>
               <p className="mt-2 text-gray-400">Gérez les utilisateurs, les autorisations et les paramètres système</p>
             </div>
-            <div className="mt-4 md:mt-0">
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2">
-                <span>📊 Exporter les données</span>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -174,33 +169,6 @@ const AdminDashboard: React.FC = () => {
           />
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Actions Rapides</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <QuickAction
-              title="Ajouter un Utilisateur"
-              description="Créer un nouveau compte utilisateur"
-              icon="👤"
-              onClick={() => handleQuickAction('addUser')}
-              color="blue"
-            />
-            <QuickAction
-              title="Exporter les Données"
-              description="Télécharger les données utilisateurs"
-              icon="📥"
-              onClick={() => handleQuickAction('exportData')}
-              color="green"
-            />
-            <QuickAction
-              title="Paramètres Système"
-              description="Configurer les paramètres de l'application"
-              icon="⚙️"
-              onClick={() => handleQuickAction('settings')}
-              color="purple"
-            />
-          </div>
-        </div>
 
         {/* Main Content */}
         <div className="bg-gray-800 rounded-2xl shadow-xl overflow-hidden">

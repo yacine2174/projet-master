@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import Sidebar from './Sidebar';
 import { NotificationBell } from './NotificationSystem';
 
 interface AppLayoutProps {
@@ -11,29 +10,15 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
   return (
-    <div className="flex min-h-screen bg-[var(--gray-bg)] text-white">
-      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
-        {/* Top Header */}
-        <header className="bg-[var(--gray-900)] border-b border-[var(--gray-border)] h-16 flex items-center justify-between px-6 shadow-lg">
-          <button onClick={toggleSidebar} className="text-gray-400 hover:text-white">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+    <div className="min-h-screen bg-[var(--gray-bg)] text-white">
+      {/* Top Header */}
+      <header className="bg-[var(--gray-900)] border-b border-[var(--gray-border)] h-16 flex items-center justify-end px-6 shadow-lg">
           <div className="flex items-center space-x-4">
             <NotificationBell />
             <div className="flex items-center space-x-2 px-3 py-2 bg-[var(--gray-800)] rounded-lg">
@@ -58,11 +43,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 bg-[var(--gray-900)]">
-          {children}
-        </main>
-      </div>
+      {/* Main Content Area */}
+      <main className="min-h-[calc(100vh-4rem)] p-6 bg-[var(--gray-900)]">
+        {children}
+      </main>
     </div>
   );
 };
