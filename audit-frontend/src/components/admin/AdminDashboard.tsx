@@ -4,17 +4,15 @@ import AppLayout from '../common/AppLayout';
 import UserApproval from './UserApproval';
 import UserManagement from './UserManagement';
 import PasswordRequests from './PasswordRequests';
-import AuditDashboard from '../audit/AuditDashboard';
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'approval' | 'management' | 'password' | 'audits'>('approval');
+  const [activeTab, setActiveTab] = useState<'approval' | 'management' | 'password'>('approval');
 
   const tabs = [
     { id: 'approval', name: 'Approbation', icon: '✅' },
     { id: 'management', name: 'Gestion', icon: '👥' },
-    { id: 'password', name: 'Réinitialisation', icon: '🔐' },
-    { id: 'audits', name: 'Audits', icon: '🔍' }
+    { id: 'password', name: 'Réinitialisation', icon: '🔐' }
   ];
 
   return (
@@ -55,7 +53,6 @@ const AdminDashboard: React.FC = () => {
           {activeTab === 'approval' && <UserApproval />}
           {activeTab === 'management' && <UserManagement />}
           {activeTab === 'password' && <PasswordRequests />}
-          {activeTab === 'audits' && <AuditDashboard />}
         </div>
       </div>
     </AppLayout>
