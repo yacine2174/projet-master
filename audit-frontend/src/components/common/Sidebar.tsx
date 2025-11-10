@@ -13,6 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   const navItems = [
     { name: 'Dashboard', icon: '🏠', path: user?.role === 'ADMIN' ? '/admin' : (user?.role === 'RSSI' ? '/rssi' : '/ssi'), roles: ['ADMIN', 'SSI', 'RSSI'] },
+    { name: 'Audits', icon: '🔍', path: '/audits', roles: ['SSI', 'RSSI'] },
     { name: 'Projets', icon: '📋', path: '/projects', roles: ['SSI', 'RSSI'] },
     { name: 'Constats', icon: '📌', path: '/constats', roles: ['SSI', 'RSSI'] },
     { name: 'Recommandations', icon: '💡', path: '/recommandations', roles: ['SSI', 'RSSI'] },
