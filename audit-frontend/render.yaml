@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: audit-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    staticPublishPath: "./dist"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: "https://projet-master-90u5.onrender.com/api"
+      - key: VITE_FRONTEND_URL
+        value: "https://cybrix-solutions.vercel.app"

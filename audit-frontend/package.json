@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --port $PORT --host",
     "start": "vite preview --port $PORT --host",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "render-build": "npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
