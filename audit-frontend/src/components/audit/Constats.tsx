@@ -39,36 +39,54 @@ const Constats: React.FC = () => {
       setError('');
       
       console.log('🔍 Fetching constats for audit:', auditId);
-      console.log('🔑 Storage key:', storageKey);
       
-      const localConstats: Constat[] = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      console.log('📦 Local constats for this audit:', localConstats.length);
-      
-      // Check if there are any constats in the global constats storage that might be interfering
-      const globalConstats = JSON.parse(localStorage.getItem('constats') || '[]');
-      console.log('🌍 Global constats (should not be used here):', globalConstats.length);
-      
-      // Double-check that we're only using audit-specific constats
-      const auditSpecificConstats = localConstats.filter(c => c.audit === auditId);
-      console.log('🎯 Audit-specific constats:', auditSpecificConstats.length);
-
-      // Try to fetch from real API first
+      // First try to get from API
       try {
+        console.log('🌐 Attempting to fetch constats from API...');
         const apiConstats = await auditAPI.getConstats(auditId!);
-        console.log('🌐 API constats:', apiConstats.length);
-        // Merge with local stored constats (avoid duplicates by _id)
-        const merged = [
-          ...apiConstats,
-          ...auditSpecificConstats.filter(lc => !apiConstats.some(ac => ac._id === lc._id))
-        ];
-        console.log('✅ Merged constats:', merged.length);
-        setConstats(merged);
-      } catch (apiError) {
-        console.log('API not available, using localStorage data only');
+        console.log('✅ API constats received:', apiConstats.length);
         
-        // Only use localStorage data, no mock data
-        console.log('📋 Setting constats to audit-specific data only:', auditSpecificConstats.length);
-        setConstats(auditSpecificConstats);
+        // Save API data to localStorage for offline access
+        if (apiConstats.length > 0) {
+          localStorage.setItem(storageKey, JSON.stringify(apiConstats));
+          console.log('💾 Saved API constats to localStorage');
+        }
+        
+        setConstats(apiConstats);
+        return; // Exit after successful API fetch
+      } catch (apiError) {
+        console.log('⚠️ API fetch failed, falling back to localStorage');
+        // Continue to localStorage fallback
+      }
+      
+      // Fallback to localStorage if API fails
+      try {
+        console.log('🔍 Checking localStorage for constats...');
+        const storedConstats = JSON.parse(localStorage.getItem(storageKey) || '[]') as Constat[];
+        
+        // Also check legacy global constats for backward compatibility
+        const legacyConstats = JSON.parse(localStorage.getItem('constats') || '[]') as Constat[];
+        const legacyAuditConstats = legacyConstats.filter(c => c.audit === auditId);
+        
+        // Combine and deduplicate
+        const allLocalConstats = [
+          ...storedConstats,
+          ...legacyAuditConstats.filter(lc => !storedConstats.some(sc => sc._id === lc._id))
+        ];
+        
+        console.log('📦 Local constats found:', allLocalConstats.length);
+        
+        if (allLocalConstats.length > 0) {
+          setConstats(allLocalConstats);
+          return; // Exit after successful localStorage load
+        }
+        
+        console.log('ℹ️ No constats found in localStorage');
+        setConstats([]);
+      } catch (localError) {
+        console.error('❌ Error reading from localStorage:', localError);
+        setError('Erreur lors de la lecture des données locales');
+        setConstats([]);
       }
     } catch (error: any) {
       setError('Erreur lors du chargement des constats');
@@ -114,30 +132,35 @@ const Constats: React.FC = () => {
     try {
       setError('');
       
-      // Try to create constat via API first
+      // Create a new constat object with required fields
+      const newConstat: Constat = {
+        _id: `constat_${Date.now()}`,
+        ...formData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Try to save to API first
       try {
-        const newConstat = await auditAPI.createConstat(formData);
-        console.log('✅ Constat created via API:', newConstat);
-        setConstats(prev => [newConstat, ...prev]);
-        // Persist to localStorage
-        const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        localStorage.setItem(storageKey, JSON.stringify([newConstat, ...existing]));
+        const savedConstat = await auditAPI.createConstat(formData);
+        console.log('✅ Constat created via API:', savedConstat);
+        
+        // Use the server-generated ID if available
+        if (savedConstat && savedConstat._id) {
+          newConstat._id = savedConstat._id;
+        }
       } catch (apiError) {
-        console.log('API not available, using mock data');
-        
-        // Fallback to mock creation if API is not available
-        const newConstat: Constat = {
-          _id: Date.now().toString(),
-          ...formData,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        
-        setConstats(prev => [newConstat, ...prev]);
-        // Persist to localStorage
-        const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        localStorage.setItem(storageKey, JSON.stringify([newConstat, ...existing]));
+        console.log('⚠️ API not available, saving locally only');
       }
+      
+      // Always save to localStorage for offline access
+      const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const updatedConstats = [newConstat, ...existing];
+      localStorage.setItem(storageKey, JSON.stringify(updatedConstats));
+      
+      // Update UI
+      setConstats(updatedConstats);
+      console.log('💾 Saved constat to localStorage:', newConstat);
       
       // Reset form
       setFormData({
