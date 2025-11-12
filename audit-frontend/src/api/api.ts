@@ -1,4 +1,7 @@
-import { currentConfig, API_ENDPOINTS } from '../config/config';
+import config, { API_ENDPOINTS } from '../config/config';
+
+// Set the API base URL
+const API_BASE = config.apiBaseUrl;
 
 // ===== Types =====
 export interface User {
@@ -31,7 +34,6 @@ export interface PasswordResetRequest {
 }
 
 // ===== HTTP helpers =====
-const API_BASE = currentConfig.apiBaseUrl;
 
 const buildHeaders = (): HeadersInit => {
   const token = localStorage.getItem('authToken');
@@ -133,8 +135,40 @@ export const auditAPI = {
 
   // Constats
   async getConstats(auditId: string) {
-    const url = `${API_BASE}${API_ENDPOINTS.GET_CONSTATS}?audit=${encodeURIComponent(auditId)}`;
-    const res = await fetch(url, { credentials: 'include', headers: buildHeaders() });
+    const url = `${API_BASE}${API_ENDPOINTS.GET_CONSTATS}/audit/${encodeURIComponent(auditId)}`;
+    const res = await fetch(url, { 
+      credentials: 'include', 
+      headers: buildHeaders() 
+    });
+    return handleResponse(res);
+  },
+
+  // Preuves
+  async getPreuves(auditId: string) {
+    const url = `${API_BASE}${API_ENDPOINTS.PREUVES}/audit/${encodeURIComponent(auditId)}`;
+    const res = await fetch(url, { 
+      credentials: 'include', 
+      headers: buildHeaders() 
+    });
+    return handleResponse(res);
+  },
+
+  async createPreuve(payload: any) {
+    const res = await fetch(`${API_BASE}${API_ENDPOINTS.PREUVES}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: buildHeaders(),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+
+  async deletePreuve(id: string) {
+    const res = await fetch(`${API_BASE}${API_ENDPOINTS.PREUVES}/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: buildHeaders(),
+    });
     return handleResponse(res);
   },
   async createConstat(payload: any) {

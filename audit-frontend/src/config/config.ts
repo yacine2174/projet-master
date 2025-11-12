@@ -1,15 +1,17 @@
 // Configuration for different environments
-export const config = {
+const env = import.meta.env.MODE || 'development';
+
+const config = {
   // Development environment
   development: {
-    apiBaseUrl: '/api',  // Using Vite proxy
-    frontendUrl: 'http://192.168.1.12:3001'
+    apiBaseUrl: 'http://192.168.100.244:3000',
+    frontendUrl: 'http://localhost:3001'
   },
   
   // Production/Network environment
   production: {
-    apiBaseUrl: 'https://projet-master-90u5.onrender.com/api',
-    frontendUrl: process.env.VITE_FRONTEND_URL || 'https://your-vercel-app.vercel.app'
+    apiBaseUrl: import.meta.env.VITE_API_URL || 'https://projet-master-90u5.onrender.com/api',
+    frontendUrl: import.meta.env.VITE_FRONTEND_URL || 'https://cybrix-solutions.vercel.app'
   },
   
   // Test environment
@@ -19,11 +21,11 @@ export const config = {
   }
 };
 
-// Get current environment
-const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+// Get current config based on environment
+const currentConfig = config[env as keyof typeof config] || config.development;
 
-// Export current config
-export const currentConfig = config[environment as keyof typeof config];
+// Export the config (using default export for backward compatibility)
+export default currentConfig;
 
 // API endpoints
 export const API_ENDPOINTS = {
@@ -48,6 +50,9 @@ export const API_ENDPOINTS = {
   
   // Constats
   GET_CONSTATS: '/constats',
+  
+  // Preuves
+  PREUVES: '/preuves',
   GET_CONSTAT: '/constats',
   CREATE_CONSTAT: '/constats',
   UPDATE_CONSTAT: '/constats',

@@ -1,4 +1,4 @@
-import { currentConfig } from '../config/config';
+import config from '../config/config';
 
 const ensureLeadingSlash = (path: string) => {
   if (!path) return '';
@@ -10,7 +10,7 @@ const ensureLeadingSlash = (path: string) => {
  * Accepts either "/resource" or "resource" style paths.
  */
 export const buildApiUrl = (path: string) => {
-  const base = currentConfig.apiBaseUrl?.replace(/\/$/, '') || '';
+  const base = config.apiBaseUrl?.replace(/\/$/, '') || '';
   return `${base}${ensureLeadingSlash(path)}`;
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../common/Button';
-import { currentConfig } from '../../config/config';
+import config from '../../config/config';
 
 interface UserData {
   _id: string;
@@ -42,7 +42,7 @@ const UserProfile: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`${currentConfig.apiBaseUrl}/utilisateurs/profile`, {
+      const response = await fetch(`${config.apiBaseUrl}/utilisateurs/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const UserProfile: React.FC = () => {
         return;
       }
 
-      const response = await fetch(`${currentConfig.apiBaseUrl}/utilisateurs/profile`, {
+      const response = await fetch(`${config.apiBaseUrl}/utilisateurs/profile`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

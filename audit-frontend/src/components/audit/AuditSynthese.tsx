@@ -4,7 +4,7 @@ import Button from '../common/Button';
 import AppLayout from '../common/AppLayout';
 import type { Audit, Constat, Preuve, Projet, Recommandation, PlanAction } from '../../types/audit';
 import { auditAPI } from '../../api/api';
-import { currentConfig } from '../../config/config';
+import config from '../../config/config';
 
 const AuditSynthese: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +33,7 @@ const AuditSynthese: React.FC = () => {
       if (id) {
         try {
           const token = localStorage.getItem('authToken');
-          const res = await fetch(`${currentConfig.apiBaseUrl}/audits/${id}/synthese`, {
+          const res = await fetch(`${config.apiBaseUrl}/audits/${id}/synthese`, {
             credentials: 'include',
             headers: {
               'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const AuditSynthese: React.FC = () => {
           const fetched: any[] = [];
           for (const mid of missing) {
             try {
-              const res = await fetch(`${currentConfig.apiBaseUrl}/projets/${mid}`, {
+              const res = await fetch(`${config.apiBaseUrl}/projets/${mid}`, {
                 credentials: 'include',
                 headers: {
                   'Content-Type': 'application/json',

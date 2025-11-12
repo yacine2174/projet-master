@@ -91,104 +91,55 @@ const AuditDetail: React.FC = () => {
       console.log('🔄 Loading related data for audit:', auditId);
       console.log('📋 Audit normes:', currentAudit?.normes);
       
-      // Load related preuves (evidence) - always use localStorage for consistency
-      const storedPreuves = JSON.parse(localStorage.getItem('preuves') || '[]') as Preuve[];
-      console.log('📦 All preuves in localStorage:', storedPreuves.length, storedPreuves);
-      console.log('🔍 Looking for preuves with audit ID:', auditId);
-      console.log('🔍 Current audit ID type:', typeof auditId);
-      console.log('🔍 Current audit ID value:', JSON.stringify(auditId));
-      
-      const filtered = storedPreuves.filter(p => {
-        // Handle different formats of audit reference
-        let preuveAuditId = '';
+      // Load related preuves from API
+      try {
+        console.log('🌐 Fetching preuves from API...');
+        const preuves = await auditAPI.getPreuves(auditId);
+        console.log('✅ Preuves from API:', preuves.length);
+        setRelatedPreuves(preuves);
         
-        if (p.audit) {
-          // Case 1: audit is an object with _id
-          if (typeof p.audit === 'object' && p.audit._id) {
-            preuveAuditId = p.audit._id;
-          } 
-          // Case 2: audit is a direct ID string
-          else if (typeof p.audit === 'string') {
-            preuveAuditId = p.audit;
-          }
+        // Save to localStorage for offline access
+        if (preuves.length > 0) {
+          localStorage.setItem(`preuves:${auditId}`, JSON.stringify(preuves));
         }
+      } catch (preuvesError) {
+        console.error('Error fetching preuves from API, falling back to localStorage', preuvesError);
         
-        // More flexible comparison
-        const match = 
-          preuveAuditId === auditId || 
-          String(preuveAuditId) === String(auditId) ||
-          (audit && audit._id && (preuveAuditId === audit._id || String(preuveAuditId) === String(audit._id)));
-          
-        console.log('🔍 Checking preuve:', p._id, 'audit ref:', p.audit, 'extracted ID:', preuveAuditId, 'match:', match);
-        return match;
-      });
-      console.log('📎 Found preuves for audit:', filtered.length, filtered.map(p => ({ id: p._id, nom: p.nomFichier, audit: p.audit })));
-      setRelatedPreuves(filtered);
+        // Fallback to localStorage if API fails
+        try {
+          const storedPreuves = JSON.parse(localStorage.getItem(`preuves:${auditId}`) || '[]') as Preuve[];
+          console.log('📦 Using preuves from localStorage:', storedPreuves.length);
+          setRelatedPreuves(storedPreuves);
+        } catch (localError) {
+          console.error('Error loading preuves from localStorage:', localError);
+          setRelatedPreuves([]);
+        }
+      }
 
-      // Load related constats (findings) from both backend and localStorage
-      let allConstats: Constat[] = [];
-      
-      // Load from backend API
+      // Load related constats from API
       try {
-        const token = localStorage.getItem('authToken');
-        const constatsResponse = await fetch('http://192.168.100.244:3000/api/constats', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          }
-        });
+        console.log('🌐 Fetching constats from API...');
+        const constats = await auditAPI.getConstats(auditId);
+        console.log('✅ Constats from API:', constats.length);
+        setRelatedConstats(constats);
         
-        if (constatsResponse.ok) {
-          const apiConstats = await constatsResponse.json();
-          console.log('🔍 Constats from API:', apiConstats.length);
-          allConstats = [...apiConstats];
+        // Save to localStorage for offline access
+        if (constats.length > 0) {
+          localStorage.setItem(`constats:${auditId}`, JSON.stringify(constats));
         }
-      } catch (error) {
-        console.error('Error fetching constats from API:', error);
-      }
-      
-      // Load from localStorage (for mock audits)
-      try {
-        const localConstats = JSON.parse(localStorage.getItem('constats') || '[]') as Constat[];
-        console.log('🔍 Constats from localStorage:', localConstats.length);
-        allConstats = [...allConstats, ...localConstats];
-      } catch (error) {
-        console.error('Error loading constats from localStorage:', error);
-      }
-      
-      // Filter constats for this specific audit
-      console.log('🔍 All constats combined:', allConstats.length);
-      console.log('🔍 Looking for constats with audit ID:', auditId);
-      
-      const filteredConstats = allConstats.filter((c: Constat) => {
-        // Handle different formats of audit reference
-        let constatAuditId = '';
+      } catch (constatsError) {
+        console.error('Error fetching constats from API, falling back to localStorage', constatsError);
         
-        if (c.audit) {
-          // Case 1: audit is an object with _id
-          if (typeof c.audit === 'object' && c.audit._id) {
-            constatAuditId = c.audit._id;
-          } 
-          // Case 2: audit is a direct ID string
-          else if (typeof c.audit === 'string') {
-            constatAuditId = c.audit;
-          }
+        // Fallback to localStorage if API fails
+        try {
+          const storedConstats = JSON.parse(localStorage.getItem(`constats:${auditId}`) || '[]') as Constat[];
+          console.log('📦 Using constats from localStorage:', storedConstats.length);
+          setRelatedConstats(storedConstats);
+        } catch (localError) {
+          console.error('Error loading constats from localStorage:', localError);
+          setRelatedConstats([]);
         }
-        
-        // More flexible comparison
-        const match = 
-          constatAuditId === auditId || 
-          String(constatAuditId) === String(auditId) ||
-          (audit && audit._id && (constatAuditId === audit._id || String(constatAuditId) === String(audit._id)));
-          
-        console.log('🔍 Checking constat:', c._id, 'audit ref:', c.audit, 'extracted ID:', constatAuditId, 'match:', match);
-        return match;
-      });
-      
-      console.log('📎 Found constats for audit:', filteredConstats.length);
-      setRelatedConstats(filteredConstats);
+      }
 
       // Load related normes (standards)
       // If audit is from backend API, normes are already populated as objects

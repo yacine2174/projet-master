@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { currentConfig } from '../../config/config';
+import config from '../../config/config';
 
 /**
  * SecuriteProjetForm Component
@@ -98,7 +98,7 @@ const SecuriteProjetForm: React.FC = () => {
   const fetchProjet = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`${currentConfig.apiBaseUrl}/projets/${projetId}`, {
+      const response = await fetch(`${config.apiBaseUrl}/projets/${projetId}`, {
         credentials: 'include',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -118,7 +118,7 @@ const SecuriteProjetForm: React.FC = () => {
   const fetchSecurite = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`${currentConfig.apiBaseUrl}/securite-projets/${securiteId}`, {
+      const response = await fetch(`${config.apiBaseUrl}/securite-projets/${securiteId}`, {
         credentials: 'include',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -167,8 +167,8 @@ const SecuriteProjetForm: React.FC = () => {
     try {
       const token = localStorage.getItem('authToken');
       const url = securiteId 
-        ? `${currentConfig.apiBaseUrl}/securite-projets/${securiteId}`
-        : `${currentConfig.apiBaseUrl}/securite-projets`;
+        ? `${config.apiBaseUrl}/securite-projets/${securiteId}`
+        : `${config.apiBaseUrl}/securite-projets`;
       
       const method = securiteId ? 'PUT' : 'POST';
       

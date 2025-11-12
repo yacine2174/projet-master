@@ -5,7 +5,7 @@ import Button from '../common/Button';
 import Input from '../common/Input';
 import Select from '../common/Select';
 import { auditAPI } from '../../api/api';
-import { currentConfig } from '../../config/config';
+import config from '../../config/config';
 import type { CreateAuditData, Norme } from '../../types/audit';
 
 const CreateAudit: React.FC = () => {
@@ -42,7 +42,7 @@ const CreateAudit: React.FC = () => {
         
         // Fetch normes from backend API
         const token = localStorage.getItem('authToken');
-        const response = await fetch(`${currentConfig.apiBaseUrl}/normes`, {
+        const response = await fetch(`${config.apiBaseUrl}/normes`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

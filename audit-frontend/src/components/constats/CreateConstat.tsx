@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../common/Button';
 import type { CreateConstatData, Audit, Projet } from '../../types/audit';
-import { currentConfig } from '../../config/config';
+import config from '../../config/config';
 
 const CreateConstat: React.FC = () => {
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ const CreateConstat: React.FC = () => {
       // Try to get real audits from API
       let realAudits: Audit[] = [];
       try {
-        const response = await fetch(`${currentConfig.apiBaseUrl}/audits`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const response = await fetch(`${config.apiBaseUrl}/audits`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
         if (response.ok) {
           const data = await response.json();
           realAudits = data.audits || data || [];
@@ -98,7 +98,7 @@ const CreateConstat: React.FC = () => {
       if (urlAuditId && !realAudits.find(a => a._id === urlAuditId)) {
         console.log('🔍 URL audit ID not found in loaded audits, trying to fetch individual audit:', urlAuditId);
         try {
-          const individualResponse = await fetch(`${currentConfig.apiBaseUrl}/audits/${urlAuditId}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+          const individualResponse = await fetch(`${config.apiBaseUrl}/audits/${urlAuditId}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
           if (individualResponse.ok) {
             const auditData = await individualResponse.json();
             console.log('✅ CreateConstat loaded individual audit from API:', auditData);
@@ -283,7 +283,7 @@ const CreateConstat: React.FC = () => {
           delete dataToSend.projet;
         }
         
-        const response = await fetch(`${currentConfig.apiBaseUrl}/constats`, {
+        const response = await fetch(`${config.apiBaseUrl}/constats`, {
           method: 'POST',
           credentials: 'include',
           headers: {
