@@ -106,43 +106,58 @@ const PreuvesDashboard: React.FC = () => {
     try {
       setIsLoading(true);
       setError('');
-
-      // Get preuves from localStorage
-      const localStoragePreuves = JSON.parse(localStorage.getItem('preuves') || '[]');
       
-      // Default mock preuves
-      const defaultPreuves: Preuve[] = [
-        {
-          _id: 'preuve_1',
-          nomFichier: 'rapport_iso27001_2024.pdf',
-          typeFichier: 'application/pdf',
-          urlFichier: 'blob:mock-url-1',
-          audit: 'audit_1',
-          createdAt: '2024-01-15T00:00:00Z',
-          updatedAt: '2024-01-15T00:00:00Z'
-        },
-        {
-          _id: 'preuve_2',
-          nomFichier: 'firewall_config.png',
-          typeFichier: 'image/png',
-          urlFichier: 'blob:mock-url-2',
-          audit: 'audit_2',
-          createdAt: '2024-02-10T00:00:00Z',
-          updatedAt: '2024-02-10T00:00:00Z'
-        },
-        {
-          _id: 'preuve_3',
-          nomFichier: 'utilisateurs_actifs.xlsx',
-          typeFichier: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          urlFichier: 'blob:mock-url-3',
-          audit: 'audit_1',
-          createdAt: '2024-01-20T00:00:00Z',
-          updatedAt: '2024-01-20T00:00:00Z'
+      console.log('🔍 Fetching preuves...');
+      
+      // First try to get from API
+      try {
+        console.log('🌐 Attempting to fetch preuves from API...');
+        const response = await fetch('http://192.168.100.244:3000/api/preuves');
+        
+        if (response.ok) {
+          const apiPreuves = await response.json();
+          console.log('✅ API preuves received:', apiPreuves.length);
+          
+          // Save API data to localStorage for offline access
+          if (apiPreuves.length > 0) {
+            localStorage.setItem('preuves', JSON.stringify(apiPreuves));
+            console.log('💾 Saved API preuves to localStorage');
+          }
+          
+          setPreuves(apiPreuves);
+          return; // Exit after successful API fetch
+        } else {
+          console.log('⚠️ API returned non-OK status:', response.status);
+          throw new Error('API request failed');
         }
-      ];
-
-      const allPreuves = [...defaultPreuves, ...localStoragePreuves];
-      setPreuves(allPreuves);
+      } catch (apiError) {
+        console.log('⚠️ API fetch failed, falling back to localStorage');
+        // Continue to localStorage fallback
+      }
+      
+      // Fallback to localStorage if API fails
+      try {
+        console.log('🔍 Checking localStorage for preuves...');
+        const localStoragePreuves = JSON.parse(localStorage.getItem('preuves') || '[]') as Preuve[];
+        
+        // Default mock preuves (only used if localStorage is empty)
+        const defaultPreuves: Preuve[] = [];
+        
+        // Combine and deduplicate
+        const allPreuves = [
+          ...localStoragePreuves,
+          ...defaultPreuves.filter(dp => !localStoragePreuves.some(lp => lp._id === dp._id))
+        ];
+        
+        console.log('📦 Local preuves found:', allPreuves.length);
+        
+        if (allPreuves.length > 0) {
+          setPreuves(allPreuves);
+          return; // Exit after successful localStorage load
+        }
+        
+        console.log('ℹ️ No preuves found in localStorage or default data');
+        setPreuves([]);
     } catch (error: any) {
       setError('Erreur lors du chargement des preuves');
       console.error('Error fetching preuves data:', error);
