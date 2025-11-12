@@ -7,6 +7,7 @@ const { createConstatValidator, updateConstatValidator } = require('../validator
 const validate = require('../middleware/validate');
 
 router.get('/', auth, authorize('RSSI', 'SSI'), constatController.getAllConstats);
+router.get('/audit/:auditId', auth, authorize('RSSI', 'SSI'), constatController.getConstatsByAudit);
 router.get('/:id', auth, authorize('RSSI', 'SSI'), constatController.getConstatById);
 router.post('/', auth, authorize('RSSI', 'SSI'), createConstatValidator, validate, constatController.createConstat);
 router.put('/:id', auth, authorize('RSSI', 'SSI'), updateConstatValidator, validate, constatController.updateConstat); // RSSI & SSI

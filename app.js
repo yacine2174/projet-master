@@ -33,7 +33,10 @@ const allowedOrigins = [
   'http://192.168.100.245:3001',  // Other devices on network
   'http://192.168.100.246:3001',  // Additional network devices
   'http://192.168.1.132:3001',    // Previous frontend IP
-  'http://192.168.1.70:3001'      // User's current frontend IP
+  'http://192.168.1.70:3001',     // User's current frontend IP
+  'https://cybrix-solutions.vercel.app',  // Vercel production
+  'https://cybrix-solutions-git-main-yacine343r.vercel.app',  // Vercel preview
+  'https://cybrix-solutions-*.vercel.app'  // All Vercel previews
 ];
 
 // Add production frontend URL from environment variable

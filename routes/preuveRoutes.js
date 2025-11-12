@@ -7,6 +7,7 @@ const { createPreuveValidator, updatePreuveValidator } = require('../validators/
 const validate = require('../middleware/validate');
 
 router.get('/', auth, authorize('RSSI', 'SSI'), preuveController.getAllPreuves);
+router.get('/audit/:auditId', auth, authorize('RSSI', 'SSI'), preuveController.getPreuvesByAudit);
 router.get('/:id', auth, authorize('RSSI', 'SSI'), preuveController.getPreuveById);
 router.post('/', auth, authorize('RSSI', 'SSI'), createPreuveValidator, validate, preuveController.createPreuve);
 router.put('/:id', auth, authorize('RSSI', 'SSI'), updatePreuveValidator, validate, preuveController.updatePreuve); // RSSI & SSI
