@@ -158,9 +158,13 @@ const PreuvesDashboard: React.FC = () => {
         
         console.log('ℹ️ No preuves found in localStorage or default data');
         setPreuves([]);
+      } catch (error: any) {
+        setError('Erreur lors du chargement des preuves');
+        console.error('Error fetching preuves data:', error);
+      }
     } catch (error: any) {
-      setError('Erreur lors du chargement des preuves');
-      console.error('Error fetching preuves data:', error);
+      setError('Une erreur inattendue est survenue');
+      console.error('Unexpected error:', error);
     } finally {
       setIsLoading(false);
     }
