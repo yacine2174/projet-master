@@ -99,8 +99,28 @@ const AuditDetail: React.FC = () => {
       console.log('🔍 Current audit ID value:', JSON.stringify(auditId));
       
       const filtered = storedPreuves.filter(p => {
-        console.log('🔍 Checking preuve:', p._id, 'audit field:', p.audit, 'type:', typeof p.audit, 'matches:', p.audit === auditId);
-        return p.audit === auditId;
+        // Handle different formats of audit reference
+        let preuveAuditId = '';
+        
+        if (p.audit) {
+          // Case 1: audit is an object with _id
+          if (typeof p.audit === 'object' && p.audit._id) {
+            preuveAuditId = p.audit._id;
+          } 
+          // Case 2: audit is a direct ID string
+          else if (typeof p.audit === 'string') {
+            preuveAuditId = p.audit;
+          }
+        }
+        
+        // More flexible comparison
+        const match = 
+          preuveAuditId === auditId || 
+          String(preuveAuditId) === String(auditId) ||
+          (audit && audit._id && (preuveAuditId === audit._id || String(preuveAuditId) === String(audit._id)));
+          
+        console.log('🔍 Checking preuve:', p._id, 'audit ref:', p.audit, 'extracted ID:', preuveAuditId, 'match:', match);
+        return match;
       });
       console.log('📎 Found preuves for audit:', filtered.length, filtered.map(p => ({ id: p._id, nom: p.nomFichier, audit: p.audit })));
       setRelatedPreuves(filtered);
@@ -143,9 +163,27 @@ const AuditDetail: React.FC = () => {
       console.log('🔍 Looking for constats with audit ID:', auditId);
       
       const filteredConstats = allConstats.filter((c: Constat) => {
-        const constatAuditId = typeof c.audit === 'object' && c.audit?._id ? c.audit._id : c.audit;
-        const match = constatAuditId === auditId || String(constatAuditId) === String(auditId);
-        console.log('🔍 Checking constat:', c._id, 'audit:', constatAuditId, 'match:', match);
+        // Handle different formats of audit reference
+        let constatAuditId = '';
+        
+        if (c.audit) {
+          // Case 1: audit is an object with _id
+          if (typeof c.audit === 'object' && c.audit._id) {
+            constatAuditId = c.audit._id;
+          } 
+          // Case 2: audit is a direct ID string
+          else if (typeof c.audit === 'string') {
+            constatAuditId = c.audit;
+          }
+        }
+        
+        // More flexible comparison
+        const match = 
+          constatAuditId === auditId || 
+          String(constatAuditId) === String(auditId) ||
+          (audit && audit._id && (constatAuditId === audit._id || String(constatAuditId) === String(audit._id)));
+          
+        console.log('🔍 Checking constat:', c._id, 'audit ref:', c.audit, 'extracted ID:', constatAuditId, 'match:', match);
         return match;
       });
       
